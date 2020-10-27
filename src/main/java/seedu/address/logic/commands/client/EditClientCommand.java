@@ -13,7 +13,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 
+import javafx.scene.layout.AnchorPane;
 import seedu.address.commons.core.Messages;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.CollectionUtil;
@@ -27,6 +29,7 @@ import seedu.address.model.client.Email;
 import seedu.address.model.client.Name;
 import seedu.address.model.client.Phone;
 import seedu.address.model.tag.Tag;
+import seedu.address.ui.Homepage;
 
 /**
  * Edits the details of an existing Client in the address book.
@@ -90,7 +93,10 @@ public class EditClientCommand extends Command {
         }
 
         model.updateFilteredClientList(PREDICATE_SHOW_ALL_CLIENTS);
-        return new CommandResult(String.format(MESSAGE_EDIT_CLIENT_SUCCESS, editedClient));
+
+        Supplier<AnchorPane> run = () -> Homepage.getHomePage().getRoot();
+
+        return new CommandResult(String.format(MESSAGE_EDIT_CLIENT_SUCCESS, editedClient), run);
     }
 
     /**
