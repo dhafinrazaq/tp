@@ -1,0 +1,22 @@
+@startuml
+start
+:Edit Schedule Command;
+
+if () then ([isUpdatingSessionIndex])
+    :Update Session Index;
+    else ([else])
+    endif
+
+    if () then ([isUpdatingPayment])
+        :Update Payment Status;
+        else ([else])
+        endif
+
+        if () then ([isUpdatingRemark])
+        :Update Remark;
+        else ([else])
+
+        endif
+        :Print Successful;
+stop
+@enduml

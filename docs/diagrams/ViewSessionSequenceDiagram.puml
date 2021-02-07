@@ -1,0 +1,64 @@
+@startuml
+!include style.puml
+
+Actor User as user USER_COLOR
+
+box Ui UI_COLOR_T1
+participant ":MainWindow" as MainWindow UI_COLOR
+participant ":RightSideBar" as RightSideBar UI_COLOR
+end box
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as LogicManager LOGIC_COLOR
+participant "command:ViewSessionCommand" as ViewSessionCommand LOGIC_COLOR
+participant ":CommandResult" as CommandResult LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "model:Model" as Model MODEL_COLOR
+end box
+
+user -> MainWindow : executeCommand("sview p/week")
+activate MainWindow
+
+MainWindow-> LogicManager : execute("sview p/week")
+activate LogicManager
+
+ref over LogicManager, ViewSessionCommand : parse command arguments
+
+LogicManager -> ViewSessionCommand : execute(model)
+activate ViewSessionCommand
+
+ViewSessionCommand -> Model : updateFilteredSessionList(pred)
+activate Model
+
+Model --> ViewSessionCommand :
+deactivate Model
+
+create CommandResult
+ViewSessionCommand -> CommandResult:
+activate CommandResult
+
+CommandResult --> ViewSessionCommand : result
+deactivate CommandResult
+
+ViewSessionCommand --> LogicManager : result
+deactivate ViewSessionCommand
+ViewSessionCommand -[hidden]-> LogicManager : result
+destroy ViewSessionCommand
+MainWindow<--LogicManager : result
+deactivate LogicManager
+
+MainWindow-> RightSideBar : update(result, "sview p/week")
+activate RightSideBar
+
+ref over RightSideBar, LogicManager : update RightSideBar
+
+RightSideBar--> MainWindow
+deactivate RightSideBar
+MainWindow --> user
+deactivate MainWindow
+|||
+
+
+@enduml

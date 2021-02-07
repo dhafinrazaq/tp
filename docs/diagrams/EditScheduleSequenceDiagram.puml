@@ -1,0 +1,69 @@
+@startuml
+!include style.puml
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as LogicManager LOGIC_COLOR
+participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
+participant ":EditScheduleCommandParser" as EditScheduleCommandParser LOGIC_COLOR
+participant "editedSchedule:EditScheduleCommand" as EditScheduleCommand LOGIC_COLOR
+participant ":CommandResult" as CommandResult LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant ":Model" as Model MODEL_COLOR
+end box
+
+[-> LogicManager : execute("schedit c/1 s/1 us/2")
+activate LogicManager
+
+LogicManager -> AddressBookParser : parseCommand("schedit c/1 s/1 us/2")
+activate AddressBookParser
+
+create EditScheduleCommandParser
+AddressBookParser -> EditScheduleCommandParser
+activate EditScheduleCommandParser
+
+EditScheduleCommandParser --> AddressBookParser
+deactivate EditScheduleCommandParser
+
+AddressBookParser -> EditScheduleCommandParser : parse("c/1 s/1 us/2")
+activate EditScheduleCommandParser
+
+create EditScheduleCommand
+EditScheduleCommandParser -> EditScheduleCommand
+activate EditScheduleCommand
+
+EditScheduleCommand --> EditScheduleCommandParser : target, editedSchedule
+deactivate EditScheduleCommand
+
+EditScheduleCommandParser --> AddressBookParser : target, editedSchedule
+deactivate EditScheduleCommandParser
+'Hidden arrow to position the destroy marker below the end of the activation bar.
+EditScheduleCommandParser -[hidden]-> AddressBookParser
+destroy EditScheduleCommandParser
+
+AddressBookParser --> LogicManager : target, editedSchedule
+deactivate AddressBookParser
+
+LogicManager -> EditScheduleCommand : execute()
+activate EditScheduleCommand
+
+EditScheduleCommand -> Model : setSchedule(target, editedSchedule)
+activate Model
+
+Model --> EditScheduleCommand
+deactivate Model
+
+create CommandResult
+EditScheduleCommand -> CommandResult
+activate CommandResult
+
+CommandResult --> EditScheduleCommand
+deactivate CommandResult
+
+EditScheduleCommand --> LogicManager : result
+deactivate EditScheduleCommand
+
+[<--LogicManager
+deactivate LogicManager
+@enduml

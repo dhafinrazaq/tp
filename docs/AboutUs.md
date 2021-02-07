@@ -5,55 +5,65 @@ title: About Us
 
 We are a team based in the [School of Computing, National University of Singapore](http://www.comp.nus.edu.sg).
 
-You can reach us at the email `seer[at]comp.nus.edu.sg`
+We are looking for a good internships! <br>
+You can reach our supervisor at `damithc[at]comp.nus.edu.sg`
 
 ## Project team
 
-### John Doe
+### Dhafin Razaq Oktoyuzan
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/dhafinrazaq.png" width="200px">
 
-[[homepage](http://www.comp.nus.edu.sg/~damithch)]
-[[github](https://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
+[[github](https://github.com/dhafinrazaq)] [[Project Portfolio Page (PPP)](team/dhafinrazaq)]
 
-* Role: Project Advisor
+#### Developer & Deliverables in-charge
 
-### Jane Doe
+* Ensure project deliverables are done on time and in the right format.
 
-<img src="images/johndoe.png" width="200px">
+---
 
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
+### Bennett Clement
 
-* Role: Team Lead
-* Responsibilities: UI
+<img src="images/benclmnt.png" width="200px">
 
-### Johnny Doe
+[[github](https://github.com/benclmnt)] [[Project Portfolio Page (PPP)](team/benclmnt)]
 
-<img src="images/johndoe.png" width="200px">
+#### Developer & Code Quality in-charge
 
-[[github](http://github.com/johndoe)] [[portfolio](team/johndoe.md)]
+* Looks after code quality, ensures adherence to coding standards within the project.
 
-* Role: Developer
-* Responsibilities: Data
+---
 
-### Jean Doe
+### Maguire Ong
 
-<img src="images/johndoe.png" width="200px">
+<img src="images/maguireong.png" width="200px">
 
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
+[[github](http://github.com/maguireong)] [[Project Portfolio Page (PPP)](team/maguireong)]
 
-* Role: Developer
-* Responsibilities: Dev Ops + Threading
+#### Developer & Integration in-charge
 
-### James Doe
+* In charge of versioning of the code, maintaining the code repository, integrating various parts of the software to create a whole.
 
-<img src="images/johndoe.png" width="200px">
+---
 
-[[github](http://github.com/johndoe)]
-[[portfolio](team/johndoe.md)]
+### Kelvin Wong Jian Quan
 
-* Role: Developer
-* Responsibilities: UI
+<img src="images/kelvinvin.png" width="200px">
+
+[[github](http://github.com/kelvinvin)] [[Project Portfolio Page (PPP)](team/kelvinvin)]
+
+#### Developer & Documentation in-charge
+
+* Responsible for the quality of various project documents.
+
+---
+
+### Tan Wei Jie
+
+<img src="images/tanweijie123.png" width="200px">
+
+[[github](http://github.com/tanweijie123)] [[Project Portfolio Page (PPP)](team/tanweijie123)]
+
+#### Developer & UI in-charge
+
+* Ensures the UI is designed and integrated properly. 

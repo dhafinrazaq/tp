@@ -1,0 +1,26 @@
+@startuml
+
+object "__enduranceTraining:Session__" as session {
+    interval = 12/02/2020 1400 - 1600
+}
+
+object "__andy:Client__" as secondClient {
+    name = Andy
+}
+object "__s2:Schedule__" as secondSchedule
+(secondClient, session) .. secondSchedule
+
+object "__john:Client__" as firstClient {
+    name = John
+}
+object "__s1:Schedule__" as firstSchedule
+(firstClient, session) .. firstSchedule
+
+note as N1
+Client List:
+1. john
+2. andy
+Session List:
+1. endurance training (12/02/2020 1400 - 1600)
+endnote
+@enduml

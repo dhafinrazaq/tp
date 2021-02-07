@@ -1,0 +1,45 @@
+@startuml
+!include style.puml
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as LogicManager LOGIC_COLOR
+participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
+participant ":ViewSessionCommandParser" as ViewSessionCommandParser LOGIC_COLOR
+participant "command:ViewSessionCommand" as ViewSessionCommand LOGIC_COLOR
+end box
+
+group sd parse command arguments
+
+|||
+LogicManager -> AddressBookParser: parseCommand("sview p/week")
+activate AddressBookParser
+create ViewSessionCommandParser
+
+AddressBookParser -> ViewSessionCommandParser
+activate ViewSessionCommandParser
+
+ViewSessionCommandParser --> AddressBookParser
+deactivate ViewSessionCommandParser
+
+AddressBookParser -> ViewSessionCommandParser : parse("sview p/week")
+activate ViewSessionCommandParser
+
+create ViewSessionCommand
+ViewSessionCommandParser -> ViewSessionCommand : ViewSessionCommand("week")
+activate ViewSessionCommand
+
+ViewSessionCommand --> ViewSessionCommandParser : command
+deactivate ViewSessionCommand
+
+ViewSessionCommandParser --> AddressBookParser : command
+deactivate ViewSessionCommandParser
+
+ViewSessionCommandParser -[hidden]-> AddressBookParser : command
+destroy ViewSessionCommandParser
+
+AddressBookParser -> LogicManager: command
+deactivate AddressBookParser
+|||
+end
+
+@enduml

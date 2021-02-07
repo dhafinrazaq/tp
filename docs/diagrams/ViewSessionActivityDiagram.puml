@@ -1,0 +1,22 @@
+@startuml
+start
+:User executes ViewSessionCommand;
+:Parse input from user;
+if () then ([period is valid])
+if () then ([period is found in view session hashmap])
+    :Get predicate from Hashmap;
+    else ([else])
+        if () then ([isPast])
+            :Create predicate for specified units in the past;
+        else ([else])
+            :Create predicate for specified units in the future;
+            endif
+        endif
+    :Update predicate on Session List;
+    :Show feedback message to user;
+    :Update title of Session List;
+    stop
+    else ([else])
+        :Show error message to user;
+        stop
+@enduml

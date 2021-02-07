@@ -1,0 +1,78 @@
+@startuml
+!include ../style.puml
+
+skinparam defaultFontSize 24
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as LogicManager LOGIC_COLOR
+participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
+participant "d:DeleteSessionCommand" as DeleteSessionCommand LOGIC_COLOR
+participant ":CommandResult" as CommandResult LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "model:Model" as Model MODEL_COLOR
+end box
+[-> LogicManager : execute("sdel 1 f/")
+activate LogicManager
+
+box Storage STORAGE_COLOR_T1
+participant "storage:Storage" as Storage STORAGE_COLOR
+end box
+
+LogicManager -> AddressBookParser : parseCommand("sdel 1 f/")
+activate AddressBookParser
+
+ref over AddressBookParser, DeleteSessionCommand : parse command arguments
+
+AddressBookParser --> LogicManager : d
+deactivate AddressBookParser
+
+LogicManager -> DeleteSessionCommand : execute(model)
+activate DeleteSessionCommand
+
+DeleteSessionCommand -> Model : getFilteredSessionList()
+activate Model
+
+deactivate Model
+
+DeleteSessionCommand -> Model: hasAnyScheduleAssociatedWithSession(Session)
+activate Model
+
+deactivate Model
+
+DeleteSessionCommand -> Model: deleteSessionAssociatedSchedules(Session)
+activate Model
+
+deactivate Model
+
+DeleteSessionCommand -> Model: deleteSession(Session)
+activate Model
+
+deactivate Model
+
+create CommandResult
+DeleteSessionCommand -> CommandResult: CommandResult(String)
+activate CommandResult
+
+CommandResult --> DeleteSessionCommand : result
+deactivate CommandResult
+
+DeleteSessionCommand --> LogicManager : result
+deactivate DeleteSessionCommand
+DeleteSessionCommand -[hidden]-> LogicManager : result
+destroy DeleteSessionCommand
+
+LogicManager --> Model: getAddressBook()
+activate Model
+
+deactivate Model
+
+LogicManager --> Storage : saveAddressBook(addressBook)
+activate Storage
+
+deactivate Storage
+
+[<--LogicManager : result
+deactivate LogicManager
+@enduml

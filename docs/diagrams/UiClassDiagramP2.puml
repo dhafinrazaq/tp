@@ -1,0 +1,52 @@
+@startuml
+!include style.puml
+skinparam arrowThickness 1.0
+skinparam arrowColor UI_COLOR_T4
+skinparam classBackgroundColor UI_COLOR
+
+package UiComponents <<Rectangle>> {
+Class MainWindow
+Class SettingsWindow
+Class HelpWindow
+Class ResultDisplay
+Class ClientListPanel
+Class ClientCard
+Class StatusBarFooter
+Class Homepage
+class RightSideBar
+class SessionCard
+class ClientInfoPage
+Class CommandBox
+}
+
+package Model <<Rectangle>> {
+Class HiddenModel #FFFFFF
+}
+
+package Logic <<Rectangle>> {
+Class HiddenLogic #FFFFFF
+}
+
+Class HiddenOutside #FFFFFF
+
+MainWindow -up-> Model
+MainWindow -up-> Logic
+
+MainWindow *-right-> HelpWindow
+MainWindow *-down-> SettingsWindow
+MainWindow <-down-> CommandBox
+MainWindow *-down-> ResultDisplay
+MainWindow <-left-> ClientListPanel
+MainWindow *-down-> StatusBarFooter
+MainWindow <-down-> Homepage
+MainWindow <-> RightSideBar
+MainWindow <-down-> ClientInfoPage
+
+ClientListPanel -left-> ClientCard
+RightSideBar -right-> SessionCard
+
+StatusBarFooter -[hidden]down- ResultDisplay
+StatusBarFooter -[hidden]down- SettingsWindow
+HelpWindow -[hidden]left- ResultDisplay
+
+@enduml

@@ -1,0 +1,61 @@
+@startuml
+!include style.puml
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as LogicManager LOGIC_COLOR
+participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
+participant ":EditSessionCommandParser" as EditSessionCommandParser LOGIC_COLOR
+participant "editedSession:EditSessionCommand" as EditSessionCommand LOGIC_COLOR
+participant ":CommandResult" as CommandResult LOGIC_COLOR
+end box
+
+[-> LogicManager : execute("sedit 1 g/coolgym")
+activate LogicManager
+
+LogicManager -> AddressBookParser : parseCommand("sedit 1 g/coolgym")
+activate AddressBookParser
+
+create EditSessionCommandParser
+AddressBookParser -> EditSessionCommandParser
+activate EditSessionCommandParser
+
+EditSessionCommandParser --> AddressBookParser
+deactivate EditSessionCommandParser
+
+AddressBookParser -> EditSessionCommandParser : parse("1 g/coolgym")
+activate EditSessionCommandParser
+
+create EditSessionCommand
+EditSessionCommandParser -> EditSessionCommand
+activate EditSessionCommand
+
+EditSessionCommand --> EditSessionCommandParser : target, editedSession
+deactivate EditSessionCommand
+
+EditSessionCommandParser --> AddressBookParser : target, editedSession
+deactivate EditSessionCommandParser
+'Hidden arrow to position the destroy marker below the end of the activation bar.
+EditSessionCommandParser -[hidden]-> AddressBookParser
+destroy EditSessionCommandParser
+
+AddressBookParser --> LogicManager : target, editedSession
+deactivate AddressBookParser
+
+LogicManager -> EditSessionCommand : execute(model)
+activate EditSessionCommand
+
+create CommandResult
+EditSessionCommand -> CommandResult : CommandResult(String)
+activate CommandResult
+
+CommandResult --> EditSessionCommand
+deactivate CommandResult
+
+EditSessionCommand --> LogicManager : result
+deactivate EditSessionCommand
+EditSessionCommandParser -[hidden]-> AddressBookParser
+destroy EditSessionCommand
+
+[<--LogicManager
+deactivate LogicManager
+@enduml

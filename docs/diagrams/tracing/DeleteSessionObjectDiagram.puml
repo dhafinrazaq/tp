@@ -1,0 +1,23 @@
+@startuml
+skinparam arrowThickness 1.1
+
+object "__andy:Client__" as secondClient {
+    name = Andy
+}
+
+object "__john:Client__" as firstClient {
+    name = John
+}
+
+object "__enduranceTraining:Session__" as session {
+    interval = 12/02/2020 1400 - 1600
+}
+
+object "__:Schedule__" as firstSchedule
+object "__:Schedule__" as secondSchedule
+
+(firstClient, session) .. firstSchedule
+
+(secondClient, session) .. secondSchedule
+
+@enduml

@@ -2,6 +2,8 @@ package seedu.address.logic;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
@@ -14,7 +16,10 @@ import seedu.address.logic.parser.AddressBookParser;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.Model;
 import seedu.address.model.ReadOnlyAddressBook;
-import seedu.address.model.person.Person;
+import seedu.address.model.client.Client;
+import seedu.address.model.schedule.Schedule;
+import seedu.address.model.session.Session;
+import seedu.address.model.util.WeightUnit;
 import seedu.address.storage.Storage;
 
 /**
@@ -60,8 +65,38 @@ public class LogicManager implements Logic {
     }
 
     @Override
-    public ObservableList<Person> getFilteredPersonList() {
-        return model.getFilteredPersonList();
+    public ObservableList<Client> getFilteredClientList() {
+        return model.getFilteredClientList();
+    }
+
+    @Override
+    public ObservableList<Session> getFilteredSessionList() {
+        return model.getFilteredSessionList();
+    }
+
+    @Override
+    public void updateFilteredSessionList(Predicate<Session> predicate) {
+        model.updateFilteredSessionList(predicate);
+    }
+
+    @Override
+    public List<Client> getAssociatedClientList(Session sessionKey) {
+        return model.findClientBySession(sessionKey);
+    }
+
+    @Override
+    public List<Session> getAssociatedSessionList(Client clientKey) {
+        return model.findSessionByClient(clientKey);
+    }
+
+    @Override
+    public List<Schedule> getAssociatedScheduleList(Client clientKey) {
+        return model.findScheduleByClient(clientKey);
+    }
+
+    @Override
+    public List<Schedule> getAssociatedScheduleList(Session sessionKey) {
+        return model.findScheduleBySession(sessionKey);
     }
 
     @Override
@@ -77,5 +112,15 @@ public class LogicManager implements Logic {
     @Override
     public void setGuiSettings(GuiSettings guiSettings) {
         model.setGuiSettings(guiSettings);
+    }
+
+    @Override
+    public WeightUnit getPreferredWeightUnit() {
+        return model.getPreferredWeightUnit();
+    }
+
+    @Override
+    public void setPreferredWeightUnit(WeightUnit weightUnit) {
+        model.setPreferredWeightUnit(weightUnit);
     }
 }

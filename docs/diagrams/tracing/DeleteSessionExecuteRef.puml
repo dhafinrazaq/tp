@@ -1,0 +1,114 @@
+@startuml
+!include ../style.puml
+
+group sd execute command
+
+box Logic LOGIC_COLOR_T1
+participant ":DeleteSessionCommand" as DeleteSessionCommand LOGIC_COLOR
+participant "result:CommandResult" as CommandResult LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "model:Model" as Model MODEL_COLOR
+participant ":AddressBook" as AddressBook MODEL_COLOR
+participant ":Schedule" as Schedule MODEL_COLOR
+participant ":Session" as Session MODEL_COLOR
+end box
+
+|||
+[-> DeleteSessionCommand : execute(model)
+activate DeleteSessionCommand
+
+DeleteSessionCommand -> Model : getFilteredSessionList()
+activate Model
+
+Model --> DeleteSessionCommand : filteredSessions
+deactivate Model
+
+DeleteSessionCommand -> Model: hasAnyScheduleAssociatedWithSession(Session)
+activate Model
+
+Model -> AddressBook : getScheduleList()
+activate AddressBook
+
+AddressBook --> Model : scheduleList
+deactivate AddressBook
+
+loop all schedule in scheduleList
+    Model -> Schedule : getSession()
+    activate Schedule
+
+    Schedule -> Session: isIdentical()
+    note left : search for schedule with same session
+    activate Session
+
+    deactivate Session
+    deactivate Schedule
+end
+
+Model --> DeleteSessionCommand
+deactivate Model
+
+DeleteSessionCommand -> Model: deleteSessionAssociatedSchedules(Session)
+activate Model
+
+Model -> AddressBook : getScheduleList()
+activate AddressBook
+
+AddressBook --> Model : scheduleList
+deactivate AddressBook
+
+loop all schedule in scheduleList
+    Model -> Schedule : getSchedule()
+    activate Schedule
+
+    Schedule -> Session : getSession()
+    activate Session
+
+    Session --> Schedule : sessionToTest
+    deactivate Session
+
+    Schedule --> Model : sessionToTest
+    deactivate Schedule
+
+    Model --> Session: isIdentical(sessionToTest)
+    note left : search for schedule with same session
+    activate Session
+
+    deactivate Session
+end
+
+loop all schedule in associatedScheduleList
+    Model -> Model : deleteSchedule()
+    activate Model MODEL_COLOR_T1
+
+    Model -> AddressBook : removeSchedule(schedule)
+    activate AddressBook
+
+    deactivate AddressBook
+    deactivate Model
+end
+
+deactivate Model
+
+DeleteSessionCommand -> Model: deleteSession(Session)
+activate Model
+
+deactivate Model
+
+create CommandResult
+DeleteSessionCommand -> CommandResult: CommandResult(String)
+activate CommandResult
+
+CommandResult --> DeleteSessionCommand : result
+deactivate CommandResult
+
+[<-- DeleteSessionCommand : result
+deactivate DeleteSessionCommand
+
+DeleteSessionCommand -[hidden]->] : result
+destroy DeleteSessionCommand
+
+|||
+end
+@enduml

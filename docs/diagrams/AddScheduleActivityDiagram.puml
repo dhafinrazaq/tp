@@ -1,0 +1,19 @@
+@startuml
+start
+:User executes Add Schedule command;
+:Parse input from user;
+:Get the specified Client and Session;
+:Check if a Schedule associated with the Client and Session already exists;
+
+' Since the beta syntax does not support placing the condition outside the
+' diamond we place it as the true branch instead.
+
+if () then ([Existing Schedule is found])
+    :Show error message to user;
+    stop
+else([else])
+endif
+:Add Schedule;
+:Show feedback message to user;
+stop
+@enduml

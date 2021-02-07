@@ -1,0 +1,74 @@
+@startuml
+!include style.puml
+
+Actor User as user USER_COLOR
+box Ui UI_COLOR_T1
+participant ":MainWindow" as MainWindow UI_COLOR
+participant "cip:ClientInfoPage" as ClientInfoPage UI_COLOR
+participant "chart:LineChart" as LineChart UI_COLOR
+participant ":TabPane" as TabPane UI_COLOR
+end box
+
+box Logic LOGIC_COLOR_T1
+participant ":Logic" as Logic LOGIC_COLOR
+end box
+
+Participant ":Supplier" as Supplier MODEL_COLOR
+
+user -> MainWindow : executeCommand("cview 1")
+activate MainWindow
+
+MainWindow -> Logic : execute("cview 1")
+activate Logic
+
+Logic --> MainWindow : result
+
+note right
+Logic returns a CommandResult
+with a Supplier to get the
+associated client and schedule list.
+end note
+
+deactivate Logic
+
+MainWindow -> Supplier : result.get()
+activate Supplier
+
+create ClientInfoPage
+Supplier -> ClientInfoPage : ClientInfoPage(client, scheduleList)
+activate ClientInfoPage
+
+ClientInfoPage -> ClientInfoPage : initialiseProfile(client)
+ClientInfoPage -> ClientInfoPage : initialiseSchedule(scheduleList)
+ClientInfoPage -> ClientInfoPage : initialiseChart(client, scheduleList)
+activate ClientInfoPage
+
+alt scheduleList.size() > 0
+    ClientInfoPage -> LineChart : addAll(scheduleList)
+    activate LineChart
+
+    LineChart --> ClientInfoPage : chart
+    deactivate LineChart
+
+    ClientInfoPage -> TabPane : getTabs().add(chart)
+
+else else
+    ClientInfoPage -> TabPane : getTabs().remove(chart)
+
+end alt
+
+ClientInfoPage --> ClientInfoPage
+deactivate ClientInfoPage
+
+ClientInfoPage --> Supplier
+deactivate ClientInfoPage
+
+Supplier --> MainWindow
+deactivate Supplier
+
+MainWindow -> MainWindow : setMainDisplay(cip)
+
+MainWindow --> user
+deactivate MainWindow
+
+@enduml

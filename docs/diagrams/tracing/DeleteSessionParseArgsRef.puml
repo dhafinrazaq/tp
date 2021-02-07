@@ -1,0 +1,37 @@
+@startuml
+!include ../style.puml
+
+participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
+participant "parser:DeleteSessionCommandParser" as DeleteSessionCommandParser LOGIC_COLOR
+participant "command:DeleteSessionCommand" as DeleteSessionCommand LOGIC_COLOR
+
+group sd parse command arguments
+
+|||
+create DeleteSessionCommandParser
+AddressBookParser -> DeleteSessionCommandParser
+activate DeleteSessionCommandParser
+
+DeleteSessionCommandParser --> AddressBookParser : parser
+deactivate DeleteSessionCommandParser
+
+AddressBookParser -> DeleteSessionCommandParser : parse(args)
+activate DeleteSessionCommandParser
+
+create DeleteSessionCommand
+DeleteSessionCommandParser -> DeleteSessionCommand : DeleteSessionCommand(index, isForced)
+activate DeleteSessionCommand
+
+DeleteSessionCommand --> DeleteSessionCommandParser : command
+deactivate DeleteSessionCommand
+
+DeleteSessionCommandParser --> AddressBookParser : command
+deactivate DeleteSessionCommandParser
+
+DeleteSessionCommandParser -[hidden]-> AddressBookParser : command
+destroy DeleteSessionCommandParser
+
+|||
+end
+
+@enduml

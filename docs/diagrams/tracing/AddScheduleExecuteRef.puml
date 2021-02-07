@@ -1,0 +1,66 @@
+@startuml
+!include ../style.puml
+
+box Logic LOGIC_COLOR_T1
+participant "a:AddScheduleCommand" as AddScheduleCommand LOGIC_COLOR
+participant "schedule:Schedule" as Schedule LOGIC_COLOR
+participant ":CommandResult" as CommandResult LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "model:Model" as Model MODEL_COLOR
+end box
+
+[-> AddScheduleCommand : execute(model)
+
+activate AddScheduleCommand
+
+AddScheduleCommand -> Model: getFilteredClientList()
+activate Model
+
+Model --> AddScheduleCommand : filteredClientList
+deactivate Model
+
+AddScheduleCommand -> Model: getFilteredSessionList()
+activate Model
+
+Model --> AddScheduleCommand : filteredSessionList
+deactivate Model
+
+note over AddScheduleCommand, Model: Get second Client from filteredClientList and first Session from filteredSessionList
+
+AddScheduleCommand -> Model: hasAnyScheduleAssociatedWithClientAndSession(client2, session1)
+
+activate Model
+
+deactivate Model
+
+create Schedule
+AddScheduleCommand -> Schedule : Schedule(client2, session1)
+activate Schedule
+Schedule --> AddScheduleCommand : schedule
+deactivate Schedule
+
+AddScheduleCommand -> Model: addSchedule(schedule)
+activate Model
+
+deactivate Model
+
+create CommandResult
+AddScheduleCommand -> CommandResult: CommandResult(String)
+activate CommandResult
+
+CommandResult --> AddScheduleCommand : result
+deactivate CommandResult
+
+[<--AddScheduleCommand : result
+
+deactivate AddScheduleCommand
+
+AddScheduleCommand -[hidden]-> AddScheduleCommand : command
+
+|||
+
+destroy AddScheduleCommand
+
+@enduml

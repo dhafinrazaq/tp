@@ -3,19 +3,26 @@ package seedu.address.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static seedu.address.model.Model.PREDICATE_SHOW_ALL_PERSONS;
+import static seedu.address.model.Model.PREDICATE_SHOW_ALL_CLIENTS;
+import static seedu.address.model.Model.PREDICATE_SHOW_ALL_SESSIONS;
 import static seedu.address.testutil.Assert.assertThrows;
-import static seedu.address.testutil.TypicalPersons.ALICE;
-import static seedu.address.testutil.TypicalPersons.BENSON;
+import static seedu.address.testutil.TypicalClients.ALICE;
+import static seedu.address.testutil.TypicalClients.BENSON;
+import static seedu.address.testutil.TypicalSchedules.ALICE_GETWELL;
+import static seedu.address.testutil.TypicalSchedules.BENSON_GETWELL;
+import static seedu.address.testutil.TypicalSessions.GETWELL;
+import static seedu.address.testutil.TypicalSessions.MACHOMAN;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.GuiSettings;
-import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.client.NameContainsSubstringPredicate;
+import seedu.address.model.session.IntervalContainsDatetimePredicate;
 import seedu.address.testutil.AddressBookBuilder;
 
 public class ModelManagerTest {
@@ -72,30 +79,102 @@ public class ModelManagerTest {
         assertEquals(path, modelManager.getAddressBookFilePath());
     }
 
+    // Client Related Tests =================================================================
+
     @Test
-    public void hasPerson_nullPerson_throwsNullPointerException() {
-        assertThrows(NullPointerException.class, () -> modelManager.hasPerson(null));
+    public void hasClient_nullClient_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> modelManager.hasClient(null));
     }
 
     @Test
-    public void hasPerson_personNotInAddressBook_returnsFalse() {
-        assertFalse(modelManager.hasPerson(ALICE));
+    public void hasClient_clientNotInAddressBook_returnsFalse() {
+        assertFalse(modelManager.hasClient(ALICE));
     }
 
     @Test
-    public void hasPerson_personInAddressBook_returnsTrue() {
-        modelManager.addPerson(ALICE);
-        assertTrue(modelManager.hasPerson(ALICE));
+    public void hasClient_clientInAddressBook_returnsTrue() {
+        modelManager.addClient(ALICE);
+        assertTrue(modelManager.hasClient(ALICE));
     }
 
     @Test
-    public void getFilteredPersonList_modifyList_throwsUnsupportedOperationException() {
-        assertThrows(UnsupportedOperationException.class, () -> modelManager.getFilteredPersonList().remove(0));
+    public void getFilteredClientList_modifyList_throwsUnsupportedOperationException() {
+        assertThrows(UnsupportedOperationException.class, () -> modelManager.getFilteredClientList().remove(0));
+    }
+
+    // Session Related Tests =================================================================
+
+    @Test
+    public void hasSession_nullSession_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> modelManager.hasSession(null));
+    }
+
+    @Test
+    public void hasSession_sessionNotInAddressBook_returnsFalse() {
+        assertFalse(modelManager.hasSession(GETWELL));
+    }
+
+    @Test
+    public void hasSession_sessionInAddressBook_returnsTrue() {
+        modelManager.addSession(GETWELL);
+        assertTrue(modelManager.hasSession(GETWELL));
+    }
+
+    @Test
+    public void hasAnySessionAssociatedSchedules_nullSession_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> modelManager.hasAnyScheduleAssociatedWithSession(null));
+    }
+
+    @Test
+    public void hasAnySessionAssociatedSchedules_sessionNotInAddressBook_returnsFalse() {
+        modelManager.addSchedule(ALICE_GETWELL);
+        assertFalse(modelManager.hasAnyScheduleAssociatedWithSession(MACHOMAN));
+    }
+
+    @Test
+    public void hasAnySessionAssociatedSchedules_sessionInAddressBook_returnsTrue() {
+        modelManager.addSchedule(ALICE_GETWELL);
+        assertTrue(modelManager.hasAnyScheduleAssociatedWithSession(GETWELL));
+    }
+
+    @Test
+    public void getFilteredSessionList_modifyList_throwsUnsupportedOperationException() {
+        assertThrows(UnsupportedOperationException.class, () -> modelManager.getFilteredSessionList().remove(0));
+    }
+
+    // Schedule Related Tests =================================================================
+
+    @Test
+    public void hasSchedule_nullSchedule_throwsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> modelManager.hasSchedule(null));
+    }
+
+    @Test
+    public void hasSchedule_scheduleNotInAddressBook_returnsFalse() {
+        assertFalse(modelManager.hasSchedule(ALICE_GETWELL));
+    }
+
+    @Test
+    public void hasSchedule_scheduleInAddressBook_returnsTrue() {
+        modelManager.addSchedule(ALICE_GETWELL);
+        assertTrue(modelManager.hasSchedule(ALICE_GETWELL));
+    }
+
+    @Test
+    public void getFilteredScheduleList_modifyList_throwsUnsupportedOperationException() {
+        assertThrows(UnsupportedOperationException.class, () -> modelManager.getFilteredScheduleList().remove(0));
     }
 
     @Test
     public void equals() {
-        AddressBook addressBook = new AddressBookBuilder().withPerson(ALICE).withPerson(BENSON).build();
+        AddressBook addressBook = new AddressBookBuilder()
+                .withClient(ALICE)
+                .withClient(BENSON)
+                .withSession(GETWELL)
+                .withSession(MACHOMAN)
+                .withSchedule(ALICE_GETWELL)
+                .withSchedule(BENSON_GETWELL)
+                .build();
         AddressBook differentAddressBook = new AddressBook();
         UserPrefs userPrefs = new UserPrefs();
 
@@ -116,13 +195,21 @@ public class ModelManagerTest {
         // different addressBook -> returns false
         assertFalse(modelManager.equals(new ModelManager(differentAddressBook, userPrefs)));
 
-        // different filteredList -> returns false
+        // different filteredClientList -> returns false
         String[] keywords = ALICE.getName().fullName.split("\\s+");
-        modelManager.updateFilteredPersonList(new NameContainsKeywordsPredicate(Arrays.asList(keywords)));
+        modelManager.updateFilteredClientList(new NameContainsSubstringPredicate(Arrays.asList(keywords)));
         assertFalse(modelManager.equals(new ModelManager(addressBook, userPrefs)));
 
         // resets modelManager to initial state for upcoming tests
-        modelManager.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+        modelManager.updateFilteredClientList(PREDICATE_SHOW_ALL_CLIENTS);
+
+        // different filteredSessionList -> returns false
+        LocalDateTime start = GETWELL.getStartTime();
+        modelManager.updateFilteredSessionList(new IntervalContainsDatetimePredicate(start));
+        assertFalse(modelManager.equals(new ModelManager(addressBook, userPrefs)));
+
+        // resets modelManager to initial state for upcoming tests
+        modelManager.updateFilteredSessionList(PREDICATE_SHOW_ALL_SESSIONS);
 
         // different userPrefs -> returns false
         UserPrefs differentUserPrefs = new UserPrefs();

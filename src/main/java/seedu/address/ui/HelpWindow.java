@@ -1,12 +1,18 @@
 package seedu.address.ui;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.logging.Logger;
 
+import org.controlsfx.control.HyperlinkLabel;
+
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import seedu.address.commons.core.LogsCenter;
 
@@ -15,17 +21,14 @@ import seedu.address.commons.core.LogsCenter;
  */
 public class HelpWindow extends UiPart<Stage> {
 
-    public static final String USERGUIDE_URL = "https://se-education.org/addressbook-level3/UserGuide.html";
-    public static final String HELP_MESSAGE = "Refer to the user guide: " + USERGUIDE_URL;
+    public static final String USERGUIDE_URL = "https://ay2021s1-cs2103t-t13-3.github.io/tp/UserGuide.html";
+    public static final String HELP_MESSAGE = "Refer to the user guide: ";
 
     private static final Logger logger = LogsCenter.getLogger(HelpWindow.class);
     private static final String FXML = "HelpWindow.fxml";
 
     @FXML
-    private Button copyButton;
-
-    @FXML
-    private Label helpMessage;
+    private HyperlinkLabel helpMessage;
 
     /**
      * Creates a new HelpWindow.
@@ -34,7 +37,29 @@ public class HelpWindow extends UiPart<Stage> {
      */
     public HelpWindow(Stage root) {
         super(FXML, root);
-        helpMessage.setText(HELP_MESSAGE);
+        helpMessage.setText(HELP_MESSAGE + "[" + USERGUIDE_URL + "]");
+
+        //Create event that on click / ENTER, it will open the browser to the UG.
+        helpMessage.setOnAction(event -> {
+            new Thread(() -> {
+                try {
+                    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                        Desktop.getDesktop().browse(new URL(USERGUIDE_URL).toURI());
+                    }
+                } catch (IOException | URISyntaxException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+            event.consume();
+            root.close();
+        });
+
+        //Create an event on ESC click, it will close this window
+        root.addEventHandler(KeyEvent.KEY_PRESSED, k -> {
+            if (k.getCode() == KeyCode.ESCAPE) {
+                root.close();
+            }
+        });
     }
 
     /**
@@ -66,6 +91,7 @@ public class HelpWindow extends UiPart<Stage> {
         logger.fine("Showing help page about the application.");
         getRoot().show();
         getRoot().centerOnScreen();
+        setFocusOnLink();
     }
 
     /**
@@ -90,13 +116,15 @@ public class HelpWindow extends UiPart<Stage> {
     }
 
     /**
-     * Copies the URL to the user guide to the clipboard.
+     * Focuses on the link. Enables the user to click enter to visit the link.
      */
-    @FXML
-    private void copyUrl() {
-        final Clipboard clipboard = Clipboard.getSystemClipboard();
-        final ClipboardContent url = new ClipboardContent();
-        url.putString(USERGUIDE_URL);
-        clipboard.setContent(url);
+    public void setFocusOnLink() {
+        try {
+            TextFlow text = (TextFlow) helpMessage.getChildrenUnmodifiable().get(0);
+            Hyperlink link = (Hyperlink) text.getChildren().get(1);
+            link.requestFocus();
+        } catch (ClassCastException e) {
+            System.err.println("Unable to focus on link"); // do nothing if un-castable
+        }
     }
 }

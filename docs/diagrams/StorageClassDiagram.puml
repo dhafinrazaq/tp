@@ -13,12 +13,18 @@ Class JsonUserPrefsStorage
 Class JsonAddressBookStorage
 
 StorageManager .left.|> Storage
-StorageManager o-right-> UserPrefsStorage
-StorageManager o--> AddressBookStorage
+StorageManager --right-> UserPrefsStorage
+StorageManager --> AddressBookStorage
 
 JsonUserPrefsStorage .left.|> UserPrefsStorage
 JsonAddressBookStorage .left.|> AddressBookStorage
-JsonAddressBookStorage .down.> JsonSerializableAddressBookStorage
-JsonSerializableAddressBookStorage .right.> JsonSerializablePerson
-JsonSerializablePerson .right.> JsonAdaptedTag
+JsonAddressBookStorage .down.> JsonSerializableAddressBook
+
+JsonSerializableAddressBook *-down-> JsonAdaptedClient
+JsonAdaptedClient *-down-> JsonAdaptedTag
+
+JsonSerializableAddressBook *-down-> JsonAdaptedSession
+
+JsonSerializableAddressBook *-down-> JsonAdaptedSchedule
+
 @enduml
